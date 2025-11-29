@@ -1,6 +1,7 @@
 package repository;
 
 import model.Brigade;
+import util.DatabaseConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +9,8 @@ import java.util.List;
 public class BrigadeRepository {
     private Connection connection;
 
-    public BrigadeRepository(Connection connection) {
-        this.connection = connection;
+    public BrigadeRepository() {
+        this.connection = DatabaseConnection.getInstance().getConnection();
     }
 
     public List<Brigade> findFreeBrigades() throws SQLException {
@@ -37,11 +38,9 @@ public class BrigadeRepository {
         }
     }
 
-    // Метод ініціалізації таблиці (з вашого Register class)
     public void initTable() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("CREATE TABLE IF NOT EXISTS Brigade (brigade_id INTEGER PRIMARY KEY, status TEXT, current_address TEXT)");
-            // Додамо тестові дані, якщо таблиця пуста
             stmt.execute("INSERT OR IGNORE INTO Brigade (brigade_id, status, current_address) VALUES (1, 'free', 'Center')");
             stmt.execute("INSERT OR IGNORE INTO Brigade (brigade_id, status, current_address) VALUES (2, 'free', 'Station 2')");
         }

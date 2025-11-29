@@ -1,34 +1,25 @@
 import repository.*;
 import service.*;
-import service.MedicalSystemSwingApp;
-import java.sql.Connection;
-import java.sql.DriverManager;
+import view.MedicalSystemSwingApp;
 import javax.swing.SwingUtilities;
 
 public class Main {
     public static void main(String[] args) {
         try {
-            // 1. Підключення до БД (Використовуємо відносний шлях для Git)
-            Class.forName("org.sqlite.JDBC");
-            String url = "jdbc:sqlite:testemergency.db";
-            Connection conn = DriverManager.getConnection(url);
+            // 1. Репозиторії (з'єднання береться автоматично через Singleton)
+            PatientRepository patientRepo = new PatientRepository();
+            BrigadeRepository brigadeRepo = new BrigadeRepository();
+            CallRepository callRepo = new CallRepository();
 
-            System.out.println("БД підключено.");
-
-            // 2. Ініціалізація Репозиторіїв (Dependency Injection)
-            PatientRepository patientRepo = new PatientRepository(conn);
-            BrigadeRepository brigadeRepo = new BrigadeRepository(conn);
-            CallRepository callRepo = new CallRepository(conn);
-
-            // Створення таблиць, якщо їх немає (для першого запуску)
+            // Ініціалізація таблиць
             brigadeRepo.initTable();
             callRepo.initTable();
 
-            // 3. Налаштування Сервісу
+            // 2. Сервіс
             BrigadeSelectionStrategy strategy = new FirstAvailableStrategy();
             AmbulanceService service = new AmbulanceService(patientRepo, callRepo, brigadeRepo, strategy);
 
-            // 4. Запуск UI
+            // 3. UI
             SwingUtilities.invokeLater(() -> {
                 new MedicalSystemSwingApp(service).setVisible(true);
             });

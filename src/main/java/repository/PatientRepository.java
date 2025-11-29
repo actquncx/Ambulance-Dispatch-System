@@ -1,13 +1,15 @@
 package repository;
 
 import model.Patient;
+import util.DatabaseConnection;
 import java.sql.*;
 
 public class PatientRepository {
     private Connection connection;
 
-    public PatientRepository(Connection connection) {
-        this.connection = connection;
+    public PatientRepository() {
+        // БЕРЕМО З'ЄДНАННЯ ЧЕРЕЗ SINGLETON
+        this.connection = DatabaseConnection.getInstance().getConnection();
     }
 
     public int save(Patient patient) throws SQLException {

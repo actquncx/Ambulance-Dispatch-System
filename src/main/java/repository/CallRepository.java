@@ -1,17 +1,17 @@
 package repository;
 
 import model.Call;
+import util.DatabaseConnection;
 import java.sql.*;
 
 public class CallRepository {
     private Connection connection;
 
-    public CallRepository(Connection connection) {
-        this.connection = connection;
+    public CallRepository() {
+        this.connection = DatabaseConnection.getInstance().getConnection();
     }
 
     public int save(Call call) throws SQLException {
-        // Спрощена схема для прикладу, адаптована з вашого коду
         String sql = "INSERT INTO Call (patient_id, address, diagnosis_details, call_date) VALUES (?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setInt(1, call.getPatientId());

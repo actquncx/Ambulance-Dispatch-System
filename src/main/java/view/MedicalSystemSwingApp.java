@@ -1,4 +1,6 @@
-package service;
+package view;
+
+import service.AmbulanceService;
 
 import javax.swing.*;
 import java.awt.*;

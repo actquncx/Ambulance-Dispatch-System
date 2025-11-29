@@ -23,18 +23,22 @@ public class AmbulanceService {
         this.strategy = strategy;
     }
 
-    // Головний метод, який замінює "спагеті-код" з Register
     public String registerNewCall(String name, String surname, long phone, int age, String address, String diagnosis) {
         try {
             // 1. Зберігаємо пацієнта
             Patient patient = new Patient(name, surname, phone, age, address);
             int patientId = patientRepo.save(patient);
 
-            // 2. Створюємо виклик
-            Call call = new Call(patientId, address, diagnosis);
+            // 2. Створюємо виклик через BUILDER (Паттерн Builder)
+            Call call = new Call.Builder()
+                    .setPatientId(patientId)
+                    .setAddress(address)
+                    .setDiagnosis(diagnosis)
+                    .build();
+
             int callId = callRepo.save(call);
 
-            // 3. Шукаємо бригаду (Стратегія)
+            // 3. Шукаємо бригаду
             List<Brigade> freeBrigades = brigadeRepo.findFreeBrigades();
             Brigade selectedBrigade = strategy.selectBrigade(freeBrigades, address);
 
